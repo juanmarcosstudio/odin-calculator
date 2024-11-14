@@ -1,48 +1,54 @@
-let currentInput = ''; // Current input for display
-let firstNumber = null; // First number in calculation
-let operator = null; // Operator selected
-let secondNumber = null; // Second number in calculation
+let currentInput = '';
+let firstNumber = null;
+let operator = null;
 
-// Append numbers and operators to the display
 function appendToDisplay(value) {
-  if (currentInput === 'Error') currentInput = ''; // Reset error message
+  if (currentInput === 'Error') currentInput = '';
   currentInput += value;
   document.getElementById("display").value = currentInput;
 }
 
-// Clear the display
 function clearDisplay() {
   currentInput = '';
   firstNumber = null;
   operator = null;
-  secondNumber = null;
   document.getElementById("display").value = '';
 }
 
-// Calculate the result
-function calculate() {
-  if (firstNumber === null || operator === null || currentInput === '') return; // Incomplete expression
-  secondNumber = parseFloat(currentInput);
-  const result = operate(operator, firstNumber, secondNumber);
-
-  // Display result or error
-  if (result === "Error") {
-    document.getElementById("display").value = result;
-    currentInput = 'Error'; // Prevent further input
-  } else {
-    document.getElementById("display").value = result;
-    firstNumber = result; // Use the result for further calculations
-    operator = null; // Clear operator after calculation
-    currentInput = ''; // Clear current input for next number
+function setOperator(op) {
+  if (currentInput !== '') {
+    if (firstNumber === null) {
+      firstNumber = parseFloat(currentInput);
+    } else if (operator) {
+      firstNumber = operate(operator, firstNumber, parseFloat(currentInput));
+      document.getElementById("display").value = firstNumber;
+    }
   }
+
+  operator = op;
+  currentInput = '';
 }
 
-// Handle operator press
-function setOperator(op) {
-  if (firstNumber === null) {
-    firstNumber = parseFloat(currentInput);
+function calculate() {
+  if (firstNumber !== null && operator && currentInput !== '') {
+    const result = operate(operator, firstNumber, parseFloat(currentInput));
+    document.getElementById("display").value = result;
+    firstNumber = result;
+    operator = null; 
     currentInput = '';
   }
-  operator = op;
-  document.getElementById("display").value = '';
+}
+
+function operate(operator, num1, num2) {
+  switch (operator) {
+    case '+':
+      return num1 + num2;
+    case '-':
+      return num1 - num2;
+    case '*':
+      return num1 * num2;
+    case '/':
+      return num2 !== 0 ? num1 / num2 : 'Error';
+      return 'Error';
+  }
 }
